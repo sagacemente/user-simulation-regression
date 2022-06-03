@@ -16,6 +16,11 @@ class User:
         self.critical_thinking = critical_thinking
         self.fake_preference = fake_preference
         self.viral_preference = viral_preference
+        self.user_feature_vector = np.concatenate((self.init_topic_preference(*self.topic_preferences),
+                                                   self.init_topic_knowledge(*self.topic_knowledge),
+                                                   self.init_critical_thinking(self.critical_thinking),
+                                                   self.init_fake_preference(self.fake_preference),
+                                                   self.init_viral_preference(self.viral_preference)))
 
     def init_topic_preference(self, *topics):
         if len(topics) > 4:
@@ -70,11 +75,7 @@ class User:
             return np.random.uniform(low=0, high=self.MAX_LOW, size=1)
 
     def get_user_features(self):
-        return np.concatenate((self.init_topic_preference(*self.topic_preferences),
-                               self.init_topic_knowledge(*self.topic_knowledge),
-                               self.init_critical_thinking(self.critical_thinking),
-                               self.init_fake_preference(self.fake_preference),
-                               self.init_viral_preference(self.viral_preference)))
+        return self.user_feature_vector
 
 
 if __name__ == '__main__':
