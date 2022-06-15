@@ -2,9 +2,12 @@ import pandas as pd
 import random
 import numpy as np
 import torch
-
-class Grid_Generator():
-    def __init__(self,num_grids=30, balance=['topic', 't_f'], path_df = 'data\DEF_images_data.xlsx'):
+import pickle
+class Grid_Sequence():
+    def __init__(self,
+                num_grids=30, 
+                balance=['topic', 't_f'], 
+                path_df = 'data\DEF_images_data.xlsx'):
         self.num_grids = num_grids
         self.balance = balance
         self.path_df = path_df
@@ -76,13 +79,19 @@ class Grid_Generator():
       assert(len(listofimages)==len(set(listofimages)))
       random.shuffle(dict_grid)
       return dict_grid 
-    def save_grid(self, dict_grid, path_grid):
-      for key in dict_grids:
+    
+    def save_grid(self, dict_grid, path_grid, filename):
+      for key in dict_grid:
         #print(key,len(dict_grid[key]))
-        dict_grid[key]  =[ i.split('\\')[-1] for i in dict_grids[key]]
-      torch.save(dict_grid, path_grid)
+        dict_grid[key]  = [ i.split('\\')[-1] for i in dict_grid[key]]
+      with open(filename+'.pickle', 'wb') as handle:
+        pickle.dump(dict_grid, handle, protocol=pickle.HIGHEST_PROTOCOL)
+        
+def load_grids(path):
+    with open(path, 'rb') as handle:
+        return pickle.load(handle)
 
 if __name__ == '__main__':
-    gg = Grid_Generator(path_df='data\DEF_images_data.xlsx', balance=['topic', 't_f'])
+    gg = Grid_Sequence(path_df='data\DEF_images_data.xlsx', balance=['topic', 't_f'])
     ee =  gg.load()
     grids = gg.create_balanced_grids()
