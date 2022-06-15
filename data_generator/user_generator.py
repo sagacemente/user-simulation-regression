@@ -18,7 +18,7 @@ class User:
         self.critical_thinking = critical_thinking
         self.fake_preference = fake_preference
         self.viral_preference = viral_preference
-        self.recognize_manipulation= recognize_manipulation
+        self.recognize_manipulation = recognize_manipulation
         self.user_feature_vector = np.concatenate((self.init_topic_preference(*self.topic_preferences),
                                                    self.init_topic_knowledge(*self.topic_knowledge),
                                                    self.init_critical_thinking(self.critical_thinking),
@@ -31,13 +31,13 @@ class User:
             sys.exit(0)
         topic_vector = np.random.uniform(low=0, high=self.MAX_LOW, size=4)
         for topic in topics:
-            if topic == 'aerospace':
+            if topic == 'space':
                 topic_vector[0] = np.random.uniform(low=self.MIN_HIGH, high=1)
             elif topic == 'politics':
                 topic_vector[1] = np.random.uniform(low=self.MIN_HIGH, high=1)
-            elif topic == 'natural disaster':
+            elif topic == 'naturaldisaster':
                 topic_vector[2] = np.random.uniform(low=self.MIN_HIGH, high=1)
-            elif topic == 'common':
+            elif topic == 'commons':
                 topic_vector[3] = np.random.uniform(low=self.MIN_HIGH, high=1)
             else:
                 sys.exit(0)
@@ -48,13 +48,13 @@ class User:
             sys.exit(0)
         topic_vector = np.random.uniform(low=0, high=self.MAX_LOW, size=4)
         for topic in topics:
-            if topic == 'aerospace':
+            if topic == 'space':
                 topic_vector[0] = np.random.uniform(low=self.MIN_HIGH, high=1)
             elif topic == 'politics':
                 topic_vector[1] = np.random.uniform(low=self.MIN_HIGH, high=1)
-            elif topic == 'natural disaster':
+            elif topic == 'naturaldisaster':
                 topic_vector[2] = np.random.uniform(low=self.MIN_HIGH, high=1)
-            elif topic == 'common':
+            elif topic == 'commons':
                 topic_vector[3] = np.random.uniform(low=self.MIN_HIGH, high=1)
             else:
                 sys.exit(0)
@@ -86,26 +86,23 @@ class User:
 
     def get_user_features(self):
         return self.user_feature_vector
-    
-def save_user(user, filename:str):
+
+
+def save_user(user, filename: str):
     with open(filename+'.pickle', 'wb') as handle:
-        pickle.dump({'user':user}, handle, protocol=pickle.HIGHEST_PROTOCOL)
+        pickle.dump({'user': user}, handle, protocol=pickle.HIGHEST_PROTOCOL)
 
 
-def load_user(filename:str):
+def load_user(filename: str):
     with open(filename+'.pickle', 'rb') as handle:
         return pickle.load(handle)['user']
-     
 
 
 if __name__ == '__main__':
-    test_user = User(topic_preferences=['aerospace', 'politics', 'natural disaster'], 
-                     topic_knowledge=['common'], 
+    test_user = User(topic_preferences=['space', 'politics', 'naturaldisaster'],
+                     topic_knowledge=['commons'],
                      critical_thinking=False, 
                      fake_preference=True, 
                      viral_preference=True,
                      recognize_manipulation=True)
-    #save_user(test_user, 'provauser')
-    #loadeduser = load_user('provauser')
     print(test_user.get_user_features())
-    #print(loadeduser.get_user_features())

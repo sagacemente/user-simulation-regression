@@ -4,6 +4,7 @@ import pandas as pd
 import random
 import os
 import torch
+import pickle
 
 
 class ImageGridSequence:
@@ -76,6 +77,16 @@ class ImageGridSequence:
 
     def get_image_grid_info(self):
         return self.grid_info_dict
+
+
+def save_grid(grid_sequence, filename: str):
+    with open(filename+'.pickle', 'wb') as handle:
+        pickle.dump({'grid_sequence': grid_sequence}, handle, protocol=pickle.HIGHEST_PROTOCOL)
+
+
+def load_grid(filename: str):
+    with open(filename+'.pickle', 'rb') as handle:
+        return pickle.load(handle)['grid_sequence']
 
 
 if __name__ == '__main__':
