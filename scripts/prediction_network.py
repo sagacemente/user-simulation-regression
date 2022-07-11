@@ -7,29 +7,48 @@ from tensorflow.keras import layers
 import numpy as np
 import matplotlib.pyplot as plt
 import os
+import pickle
+from sklearn.model_selection import train_test_split
+
+TEST_SIZE = 0.2
+#num_samples, img_features_grid = 100 , 256
+#num_user_feature = 10 + 2
+#xtrain = np.random.rand(num_samples,
+#                        img_features_grid)
+
+x = []
+y = []
+all_files = os.listdir('../data/samples')
+for f in all_files:
+        with open('../data/samples/'+f, 'rb') as handle:
+            output_dict = pickle.load(handle)
+        x.append(output_dict['x'])
+        y.append(output_dict['y'])
+
+x = np.array(x)
+y = np.array(y)
+xtrain, xtest, ytrain, ytest = train_test_split(x, y, test_size=TEST_SIZE, random_state=42)
 
 
-num_samples, img_features_grid = 100 , 256
-num_user_feature = 10 + 2
 
-xtrain = np.random.rand(num_samples,
-                        img_features_grid)
 
-ytrain = np.random.rand(num_samples,
-                        num_user_feature)
+#ytrain = np.random.rand(num_samples,
+#                        num_user_feature)
 
-xtest = np.random.rand(num_samples,
-                        img_features_grid)
+#xtest = np.random.rand(num_samples,
+#                        img_features_grid)
 
-ytest = np.random.rand(num_samples,
-                        num_user_feature)
+#ytest = np.random.rand(num_samples,
+#                        num_user_feature)
+
 
 
 def fit_model(xtrain, ytrain, xtest, ytest,
               hidden_dim1=128,hidden_dim2=64,drop_out=0.75,optimizer='adam',loss='huber',
               batch_size=32,epochs=3,
-              PLOT=True, name = 'model'):
+              PLOT=True, name = 'model', save_model=False):
     #define model
+    num_user_feature = ytrain.shape[1]
     input_user = layers.Input(shape=(xtrain.shape[1]), name='input_layer')
 
     dense1 = layers.Dense(hidden_dim1, activation='relu', name='dense1')(input_user) #(dense1)
