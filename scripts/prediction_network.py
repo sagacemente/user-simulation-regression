@@ -20,15 +20,19 @@ x = []
 y = []
 all_files = os.listdir('../data/samples')
 for f in all_files:
-        with open('../data/samples/'+f, 'rb') as handle:
-            output_dict = pickle.load(handle)
+    with open('../data/samples/'+f, 'rb') as handle:
+        output_dict = pickle.load(handle)
         x.append(output_dict['x'])
         y.append(output_dict['y'])
 
+print('file loaded')
 x = np.array(x)
+x = x.reshape(x.shape[0]*x.shape[1],-1)
+print(x.shape)
 y = np.array(y)
+y = y.reshape(y.shape[0]*y.shape[1],-1)
+print(y.shape)
 xtrain, xtest, ytrain, ytest = train_test_split(x, y, test_size=TEST_SIZE, random_state=42)
-
 
 
 
@@ -45,17 +49,16 @@ xtrain, xtest, ytrain, ytest = train_test_split(x, y, test_size=TEST_SIZE, rando
 
 def fit_model(xtrain, ytrain, xtest, ytest,
               hidden_dim1=128,hidden_dim2=64,drop_out=0.75,optimizer='adam',loss='huber',
-              batch_size=32,epochs=3,
+              batch_size=32,epochs=30,
               PLOT=True, name = 'model', save_model=False):
     #define model
     num_user_feature = ytrain.shape[1]
     input_user = layers.Input(shape=(xtrain.shape[1]), name='input_layer')
 
-    dense1 = layers.Dense(hidden_dim1, activation='relu', name='dense1')(input_user) #(dense1)
+    dense1 = layers.Dense(hidden_dim1, activation='relu', name='dense1')(input_user)  #(dense1)
     dense2 = layers.Dense(hidden_dim2, activation='relu',  name='dense2')(dense1)     #(dense2)
     dpout = layers.Dropout(drop_out, name='dropout')(dense2)
     output = layers.Dense(num_user_feature, activation='relu', name = 'final_layer')(dpout)
-
 
 
     #INITIALIZE THE MODEL AND COMPILE IO
@@ -108,3 +111,7 @@ def make_predictions(model_path, samples_to_be_predicted, batch_size=32):
 
     return predictions
 
+hist, model = fit_model(xtrain, ytrain, xtest, ytest,
+              hidden_dim1=64,hidden_dim2=32,drop_out=0.75,optimizer='adam',loss='huber',
+              batch_size=32,epochs=3,
+              PLOT=True, name = 'model', save_model=False)
