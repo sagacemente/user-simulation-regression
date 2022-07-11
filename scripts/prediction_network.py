@@ -45,7 +45,7 @@ def fit_model(xtrain, ytrain, xtest, ytest,
                   name = 'USER_PREFERENCE_REGRESSION')
 
 
-    model.compile(loss={'final_layer': 'huber',
+    model.compile(loss={'final_layer': loss,
                        },
                   #loss_weights={},
                   optimizer=optimizer

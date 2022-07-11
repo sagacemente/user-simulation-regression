@@ -98,6 +98,21 @@ def load_user(filename: str):
         return pickle.load(handle)['user']
 
 
+def generate_random_user():
+    ntopics = np.random.choice([0,1,2,3,4])
+    nknowledge = np.random.choice([0,1,2,3,4])
+    topics = np.random.choice(['space', 'commons', 'politics', 'naturaldisaster'], size= ntopics,replace=False)
+    knowledge = np.random.choice(['space', 'commons', 'politics', 'naturaldisaster'], size= nknowledge, replace=False)
+    t_f = np.random.choice([True, False], size=4, replace=True)
+    test_user = User(topic_preferences=topics,
+                     topic_knowledge=knowledge,
+                     critical_thinking=t_f[0],
+                     fake_preference=t_f[1],
+                     viral_preference=t_f[2],
+                     recognize_manipulation=t_f[3])
+    return test_user
+
+
 if __name__ == '__main__':
     test_user = User(topic_preferences=['space', 'politics', 'naturaldisaster'],
                      topic_knowledge=['commons'],
