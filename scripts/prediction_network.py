@@ -19,7 +19,7 @@ TEST_SIZE = 0.2
 x = []
 y = []
 all_files = os.listdir('../data/samples')
-for f in all_files:
+for f in all_files[:250]:
     with open('../data/samples/'+f, 'rb') as handle:
         output_dict = pickle.load(handle)
         x.append(output_dict['x'])
@@ -34,8 +34,6 @@ y = y.reshape(y.shape[0]*y.shape[1],-1)
 print(y.shape)
 xtrain, xtest, ytrain, ytest = train_test_split(x, y, test_size=TEST_SIZE, random_state=42)
 
-
-
 #ytrain = np.random.rand(num_samples,
 #                        num_user_feature)
 
@@ -46,10 +44,9 @@ xtrain, xtest, ytrain, ytest = train_test_split(x, y, test_size=TEST_SIZE, rando
 #                        num_user_feature)
 
 
-
 def fit_model(xtrain, ytrain, xtest, ytest,
               hidden_dim1=128,hidden_dim2=64,drop_out=0.75,optimizer='adam',loss='huber',
-              batch_size=32,epochs=30,
+              batch_size=32,epochs=3,
               PLOT=True, name = 'model', save_model=False):
     #define model
     num_user_feature = ytrain.shape[1]
@@ -112,6 +109,7 @@ def make_predictions(model_path, samples_to_be_predicted, batch_size=32):
     return predictions
 
 hist, model = fit_model(xtrain, ytrain, xtest, ytest,
-              hidden_dim1=64,hidden_dim2=32,drop_out=0.75,optimizer='adam',loss='huber',
-              batch_size=32,epochs=3,
+              hidden_dim1=32,hidden_dim2=16,drop_out=0.25,optimizer='adam',loss='huber',
+              batch_size=32,epochs=300,
               PLOT=True, name = 'model', save_model=False)
+
