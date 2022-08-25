@@ -2,7 +2,6 @@ from data_generator.user_generator import *
 from data_generator.grid_constructor import *
 from simulation.user_choices import *
 
-
 '''
 for i in range(10):
     test_user = User(topic_preferences=['space', 'politics', 'naturaldisaster'],
@@ -28,13 +27,15 @@ choices = simulate_user_choices(test_user, test_grid)
 
 # features for each grid, e.g. grid 0
 grid_features_0 = test_grid.get_image_grid_embeddings()[0]
-print(grid_features_0)
+#print(grid_features_0)
 
 # index of features/selected image in grid 0:
-print(test_grid.get_image_grid_sequence()[0].index(choices[0][0]))
+#print(test_grid.get_image_grid_sequence()[0].index(choices[0][0]))
 
 # image_credibility and manipulation_visibility of selected image in grid 0:
-print(list(choices[0][1:]))
+print('test_grid', test_grid.grid_dict[0])
+print('choices', choices)
+#print(list(choices[0][1:]))
 
 # user features of user who selected the images
-print(test_user.get_user_features())
+#print('test_user.get_user_features()', test_user.get_user_features())

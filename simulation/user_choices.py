@@ -18,7 +18,7 @@ def simulate_user_choices(user, grid_sequence):
         grid_info_dict[key] = []
         for image in grid:
             image_info = {}
-            image_info_from_table = feature_df.loc[image.split('/')[-1]]
+            image_info_from_table = feature_df.loc[image.split("\\")[-1]]
             image_info['topic'] = image_info_from_table['topic']
             image_info['true_fake'] = image_info_from_table['t_f']
             image_info['authenticity'] = image_info_from_table['authenticity']

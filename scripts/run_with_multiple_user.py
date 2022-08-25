@@ -41,5 +41,3 @@ for i in range(num_user):
     with open(filename+'.pickle', 'wb') as handle:
         pickle.dump(res, handle, protocol=pickle.HIGHEST_PROTOCOL)
 
-
-

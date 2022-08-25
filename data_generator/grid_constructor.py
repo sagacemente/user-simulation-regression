@@ -63,6 +63,7 @@ class ImageGridSequence:
         for key, value in image_grid_sequence_dict.items():
             image_embeddings.append([])
             for image in value:
+                image = image.split("\\")[-1]
                 image_features = self.load_image_df().loc[image]
                 topic_vector = self.init_topic(image_features['topic'])
                 fakeness = self.init_fakeness(image_features['t_f'])
@@ -136,7 +137,29 @@ def save_grid(grid_sequence, filename: str):
 def load_grid(filename: str):
     with open(filename+'.pickle', 'rb') as handle:
         return pickle.load(handle)['grid_sequence']
-
+def average_input(arr):
+    new_x = []
+    for user in range(arr.shape[0]):
+        tempx =  arr[user]
+        #print('tempx.shape',tempx.shape)
+        for grid in range(arr.shape[1]):
+            the_grid = tempx[grid  , : ]
+            #print('the_grid.shape', the_grid.shape)
+            tempx_grid_un_idx =  np.where(the_grid[:,[-1]]==0)[0]
+            #print('tempx_grid_un_idx.shape', tempx_grid_un_idx.shape)
+            un_selected = the_grid[tempx_grid_un_idx, :]
+            #print('below arr\n', un_selected.shape)
+            mean_pooled = np.mean(un_selected,axis=0).reshape(1,8)
+            #print('mean_pooled shape', mean_pooled.shape)
+            #get selected
+            tempx_grid_selected_idx =  np.where(the_grid[:,[-1]]==1)[0]
+            #print(tempx_grid_selected_idx)
+            #print('tempx[tempx_grid_selected_idx].shape', tempx[tempx_grid_selected_idx].shape)
+            selected_img_feat = the_grid[tempx_grid_selected_idx]
+            #print('selected_img_feat.shape', selected_img_feat.shape)
+            new_x.append(np.concatenate([mean_pooled, selected_img_feat ]))
+    new_x = np.asarray(new_x).reshape(arr.shape[0],arr.shape[1], -1 )
+    return new_x
 
 if __name__ == '__main__':
     test_grid = ImageGridSequence(5)

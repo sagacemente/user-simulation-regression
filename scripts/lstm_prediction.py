@@ -37,10 +37,15 @@ for f in all_files:
 
 print('file loaded')
 x = np.array(x)
-x = x.reshape(x.shape[0]*x.shape[1],-1)
+print('x pre shape', x.shape)
+x = average_input(x)
+x = x.reshape(x.shape[0], x.shape[1],-1)
+print('x post shape', x.shape)
 
 y = np.array(y)
-y = y.reshape(y.shape[0]*y.shape[1],-1)
+#y = y.reshape(y.shape[0]*y.shape[1],-1)
+y = y[:, 0, :-2]
+print('y shape', y.shape)
 
 #split train test data
 xtrain, xtest, ytrain, ytest = train_test_split(x, y, test_size=TEST_SIZE, random_state=42)
@@ -64,15 +69,16 @@ def swish(x, beta = 1):
 get_custom_objects().update({'swish': Activation(swish)})
 
 def fit_model(xtrain, ytrain, xtest, ytest,
-              hidden_dim1=128,hidden_dim2=64,drop_out=0.75,optimizer='adam',loss='mae',activation ='swish',
+              hidden_dim1=128,hidden_dim2=64,drop_out=0.75,optimizer='adam',loss='mae',activation ='huber',
               batch_size=10,epochs=3, early_stop_patience = 20,
               PLOT=True, name = 'model', save_model=False):
     #define model
 
     num_user_feature = ytrain.shape[1]
-    input_user = layers.Input(shape=(xtrain.shape[1]), name='input_layer')
+    input_user = layers.Input(shape=(xtrain.shape[1], xtrain.shape[2]), name='input_layer')
 
-    dense1 = layers.Dense(hidden_dim1, activation=activation, name='dense1')(input_user)  #(dense1)
+    whole_seq_output, final_memory_state, final_carry_state = layers.LSTM(30, return_sequences=True, return_state=True)(input_user)
+    dense1 = layers.Dense(hidden_dim1, activation=activation, name='dense1')(final_memory_state)  #(dense1)
     dpout = layers.Dropout(drop_out, name='dropout')(dense1)
     dense2 = layers.Dense(hidden_dim2, activation=activation,  name='dense2')(dpout)     #(dense2)
     output = layers.Dense(num_user_feature, activation=activation, name = 'final_layer')(dense2)
@@ -95,6 +101,8 @@ def fit_model(xtrain, ytrain, xtest, ytest,
         # The values closer to 1 indicate greater dissimilarity.
         # This makes it usable as a loss function in a setting where you try to maximize the proximity between predictions and targets.
         loss = tf.keras.losses.CosineSimilarity(axis=-1, reduction="auto")
+    elif loss =='mse':
+        loss = tf.keras.losses.MeanSquaredError(reduction='auto',name='mean_squared_error')
 
     model.compile(loss={'final_layer': loss,
                        },
@@ -150,7 +158,10 @@ def compute_loss(loss='mae'):
         loss = tf.keras.losses.Huber(delta=1.0, reduction="auto", name="huber_loss")
     elif loss == 'cosine':
         loss = tf.keras.losses.CosineSimilarity(axis=-1, reduction="auto")
+    elif loss =='mse':
+        loss = tf.keras.losses.MeanSquaredError(reduction='auto',name='mean_squared_error')
     return loss
+
 def make_predictions(model_path, samples_to_be_predicted, batch_size=32):
     # Load the model
     #model = keras.models.load_model(filepath, compile = True)
@@ -159,21 +170,36 @@ def make_predictions(model_path, samples_to_be_predicted, batch_size=32):
 
     return predictions
 
-LOSS = 'huber'
+LOSS = 'mse'
 model, hist = fit_model(xtrain, ytrain, xtest, ytest,
               hidden_dim1=32,hidden_dim2=16,drop_out=0.5,optimizer='adam',loss=LOSS,activation ='swish',
-              batch_size=160,epochs=1000,early_stop_patience = 250,
+              batch_size=160,epochs=100,early_stop_patience = 250,
               PLOT=True, name = 'model', save_model=False)
 
 #2 samples predicitons
 predictions = model.predict(xtest[3:6])
 all_preds =  model.predict(xtest)
 dfpreds = pd.DataFrame(all_preds)
-dfpreds.boxplot()
+#dfpreds.boxplot()
+#plt.show()
 dfreal = pd.DataFrame(ytest)
-dfreal.boxplot()
-plt.show()
+#dfreal.boxplot()
+#plt.show()
 
+
+
+# make a list of all dataframes
+df_list = [dfpreds ,dfreal]
+nrow, ncol = 2,1
+fig, axes = plt.subplots(nrow, ncol)
+
+# plot counter
+count=0
+for r in range(nrow):
+    for c in range(ncol):
+        df_list[count].plot(ax=axes[r,c])
+        count+=1
+plt.show()
 print('prediction\nshape', predictions.shape,'\n',np.around(predictions,2) )
 print('actual\nshape', ytest[3:6].shape, '\n',np.around(ytest[3:6], 2))
 results = model.evaluate(xtest, ytest, batch_size=15)
