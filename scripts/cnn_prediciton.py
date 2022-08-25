@@ -27,10 +27,10 @@ TEST_SIZE = 0.1
 
 x = []
 y = []
-all_files = os.listdir('../data/samples')
-#all_files = os.listdir('../data/samples_clear')
+#all_files = os.listdir('../data/samples')
+all_files = os.listdir('../data/samples_clear')
 for f in all_files:
-    with open('../data/samples/'+f, 'rb') as handle:
+    with open('../data/samples_clear/'+f, 'rb') as handle:
         output_dict = pickle.load(handle)
         x.append(output_dict['x'])
         y.append(output_dict['y'])
@@ -38,8 +38,8 @@ for f in all_files:
 print('file loaded')
 x = np.array(x)
 print('x pre shape', x.shape)
-#x = average_input(x)
-x = x.reshape(x.shape[0], x.shape[1],-1)
+x = average_input(x)
+#x = x.reshape(x.shape[0], x.shape[1],-1)
 print('x post shape', x.shape)
 
 y = np.array(y)

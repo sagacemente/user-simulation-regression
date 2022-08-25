@@ -38,7 +38,7 @@ for f in all_files:
 print('file loaded')
 x = np.array(x)
 print('x pre shape', x.shape)
-x = average_input(x)
+#x = average_input(x)
 x = x.reshape(x.shape[0], x.shape[1],-1)
 print('x post shape', x.shape)
 
@@ -173,7 +173,7 @@ def make_predictions(model_path, samples_to_be_predicted, batch_size=32):
 LOSS = 'mse'
 model, hist = fit_model(xtrain, ytrain, xtest, ytest,
               hidden_dim1=32,hidden_dim2=16,drop_out=0.5,optimizer='adam',loss=LOSS,activation ='swish',
-              batch_size=160,epochs=100,early_stop_patience = 250,
+              batch_size=160,epochs=1000,early_stop_patience = 250,
               PLOT=True, name = 'model', save_model=False)
 
 #2 samples predicitons
@@ -190,16 +190,7 @@ dfreal = pd.DataFrame(ytest)
 
 # make a list of all dataframes
 df_list = [dfpreds ,dfreal]
-nrow, ncol = 2,1
-fig, axes = plt.subplots(nrow, ncol)
 
-# plot counter
-count=0
-for r in range(nrow):
-    for c in range(ncol):
-        df_list[count].plot(ax=axes[r,c])
-        count+=1
-plt.show()
 print('prediction\nshape', predictions.shape,'\n',np.around(predictions,2) )
 print('actual\nshape', ytest[3:6].shape, '\n',np.around(ytest[3:6], 2))
 results = model.evaluate(xtest, ytest, batch_size=15)
