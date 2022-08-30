@@ -19,7 +19,7 @@ from data_generator.grid_constructor import *
 
 
 start = time.time()
-TEST_SIZE = 0.1
+TEST_SIZE = 0.2
 #num_samples, img_features_grid = 100 , 256
 #num_user_feature = 10 + 2
 #xtrain = np.random.rand(num_samples,
@@ -144,7 +144,7 @@ def fit_model(xtrain, ytrain, xtest, ytest,
                         verbose=2,
                         shuffle=True
                         )
-    print('min loss\t', min(history.history['loss']))
+    print('min train loss\t', min(history.history['loss']))
     print('min val_loss  ', min(history.history['val_loss']))
     if PLOT == True:
         plt.plot(history.history['loss'],     label='train')
@@ -181,8 +181,8 @@ def make_predictions(model_path, samples_to_be_predicted, batch_size=32):
 
 LOSS = 'mse'
 model, hist = fit_model(xtrain, ytrain, xtest, ytest,
-              hidden_dim1=32,hidden_dim2=16,drop_out=0.5,optimizer='adam',loss=LOSS,activation ='swish',
-              batch_size=160,epochs=1000,early_stop_patience = 250,
+              hidden_dim1=32,hidden_dim2=16,drop_out=0.005,optimizer='adam',loss=LOSS,activation ='swish',
+              batch_size=160,epochs=1000,early_stop_patience = 800,
               PLOT=True, name = 'model', save_model=False)
 
 #2 samples predicitons
